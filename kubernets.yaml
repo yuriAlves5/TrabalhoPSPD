@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mpi-program
+spec:
+  parallelism: 1
+  completions: 1
+  template:
+    metadata:
+      name: mpi-program
+      labels:
+        app: mpi-program
+    spec:
+      containers:
+      - name: mpi-program
+        image: bor1ng/mpi_program
+        imagePullPolicy: Always
+        env:
+          - name: OMPI_MCA_btl
+            value: ^openib
+          - name: OMPI_MCA_mpi_warn_on_fork
+            value: "0"
+          - name: OMPI_MCA_btl_vader_single_copy_mechanism
+            value: "none"
+        resources:
+          requests:
+            cpu: "4"
+            memory: "4Gi"
+          limits:
+            cpu: "8"
+            memory: "8Gi"
+        command: ["/bin/bash", "-c", "mpirun -np 4 --allow-run-as-root ./your_openmp_binary -lmpi -4 -fopenmo -4"]
+      restartPolicy: Never
+  backoffLimit: 4

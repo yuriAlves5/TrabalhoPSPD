@@ -1,0 +1,20 @@
+# Use uma imagem base do Ubuntu
+FROM ubuntu:latest
+
+# Instale as dependências necessárias
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y openmpi-bin libopenmpi-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copie os arquivos do código fonte para dentro do contêiner
+COPY jogo_openMPi.c /app/jogo_openMPi.c
+
+# Defina o diretório de trabalho como /app
+WORKDIR /app
+
+# Compile o código fonte e crie o executável
+RUN mpicc -fopenmp -o your_openmp_binary jogo_openMPi.c
+
+# Comando padrão para executar o programa MPI
+CMD ["mpirun", "--allow-run-as-root", "-np", "4", "./your_openmp_binary"]
