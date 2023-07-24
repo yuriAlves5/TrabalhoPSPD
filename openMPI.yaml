@@ -24,11 +24,11 @@ spec:
             value: "none"
         resources:
           requests:
-            cpu: "4"
-            memory: "4Gi"
+            cpu: "6"
+            memory: "6Gi"
           limits:
-            cpu: "8"
-            memory: "8Gi"
+            cpu: "10"
+            memory: "10Gi"
         command: ["/bin/bash", "-c", "mpirun -np 4 --allow-run-as-root ./your_openmp_binary -lmpi -4 -fopenmo -4"]
       restartPolicy: Never
   backoffLimit: 4

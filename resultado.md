@@ -111,8 +111,18 @@ tam=512; tempos: init=0.0012188, comp=0.9294012, fim=0.0005100, tot=0.9311299
 tam=1024; tempos: init=0.0048599, comp=7.5617781, fim=0.0018840, tot=7.5685220
 
 ### resultados com openMP e MPI kubernetes
+Utilizando a plataforma Kind(kubernetes in docker) para criar um cluster localmente, foi possivel executar o openMPI em um ambiente distribuido.
+
+Se não tiver um cluster criado, crie um com o comando:
+
 ```bash
-$ sudo kubectl logs mpi-program-qckp2
+$ sudo kind create cluster --name mpi
+```
+
+```bash
+$ sudo kubectl apply -f openMPI.yaml 
+$ sudo kubectl get pods
+$ sudo kubectl logs #nome do pod algo como "mpi-program-s9w67"
 ```
 
 **Ok, RESULTADO CORRETO**
@@ -138,6 +148,59 @@ tam=512; tempos: init=0.0008821, comp=74.7925398, fim=0.0002751, tot=74.7936971
 
 **Ok, RESULTADO CORRETO**
 tam=1024; tempos: init=0.0054889, comp=76.3642101, fim=0.0010989, tot=76.3707979
+
+
+O resultado altera com a mudança no yaml do arquivo, por padrao utilizamos 4 replicas, 4 cores e 4 gigas de memoria, mas é possivel alterar esses valores para testar a elasticidade do sistema.
+
+
+
+"          requests:
+            cpu: "4"
+            memory: "4Gi"
+          limits:
+            cpu: "8"
+            memory: "8Gi"  
+"
+
+ao modificar por exemplo para
+
+"
+          requests:
+            cpu: "6"
+            memory: "6Gi"
+          limits:
+            cpu: "10"
+            memory: "10Gi"
+"
+
+obtemos resultados como:
+
+**Ok, RESULTADO CORRETO**
+tam=8; tempos: init=0.0000010, comp=0.8378010, fim=0.0000160, tot=0.8378179 
+
+**Ok, RESULTADO CORRETO**
+tam=16; tempos: init=0.0000010, comp=2.4455910, fim=0.0000231, tot=2.4456151 
+
+**Ok, RESULTADO CORRETO**
+tam=32; tempos: init=0.0000050, comp=6.1351299, fim=0.0000689, tot=6.1352038 
+
+**Ok, RESULTADO CORRETO**
+tam=64; tempos: init=0.0000169, comp=11.6326599, fim=0.0000200, tot=11.6326969 
+
+**Ok, RESULTADO CORRETO**
+tam=128; tempos: init=0.0000701, comp=23.1243930, fim=0.0000360, tot=23.1244991 
+
+**Ok, RESULTADO CORRETO**
+tam=256; tempos: init=0.0003600, comp=42.1323709, fim=0.0000830, tot=42.1328139
+
+**Ok, RESULTADO CORRETO**
+tam=512; tempos: init=0.0009260, comp=60.3051891, fim=0.0004299, tot=60.3065450 
+
+**Ok, RESULTADO CORRETO**
+tam=1024; tempos: init=0.0157862, comp=64.0400908, fim=0.0012722, tot=64.0571492 
+
+melhorando o desempenho da aplicação de acordo com a necessidade.
+
 
 # Conclusão
 A exploração das bibliotecas OpenMP e MPI mostrou-se promissora para o aprimoramento do desempenho do "Jogo da Vida" em ambientes distribuídos e paralelos. A utilização dessas tecnologias permitiu lidar com o paralelismo em nível de código, superando as limitações encontradas com o Apache Spark. O tempo de execução de um tabuleiro completo foi significativamente reduzido em comparação com a implementação original.
